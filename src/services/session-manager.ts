@@ -9,24 +9,31 @@ interface UserInfo {
     email: string;
 }
 
+interface Token {
+    userInfo: UserInfo;
+    iat: number;
+}
+
 class SessionManager {
-    static generate(info: UserInfo): Session {
+    static generate(userInfo: UserInfo): Session {
         return {
             jwt: jwt.sign(
-                info,
+                {
+                    userInfo
+                },
                 process.env.JWT_KEY!
             )
         };
     }
 
-    static getUserInfo(session: Session): UserInfo | null {
+    static getToken(session: Session): Token | null {
         try {
             // Decode the token.
-            return jwt.verify(session.jwt, process.env.JWT_KEY!) as UserInfo;
+            return jwt.verify(session.jwt, process.env.JWT_KEY!) as Token;
         } catch (err) {
             return null;
         }
     }
 }
 
-export {SessionManager, Session, UserInfo};
+export {SessionManager, Session, UserInfo, Token};

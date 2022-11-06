@@ -1,10 +1,10 @@
 import {NextFunction, Request, Response} from "express";
-import {Session, SessionManager, UserInfo} from "../services/session-manager";
+import {Session, SessionManager, Token} from "../services/session-manager";
 
 declare global {
     namespace Express {
         interface Request {
-            currentUser?: UserInfo
+            currentUser?: Token
         }
     }
 }
@@ -19,9 +19,9 @@ export const currentUser = async (
     }
 
     try {
-        const user = SessionManager.getUserInfo(req.session as Session);
-        if (user != null) {
-            req.currentUser = user;
+        const token = SessionManager.getToken(req.session as Session);
+        if (token != null) {
+            req.currentUser = token;
         }
     } catch (err) {
         console.log("Failed to get user from session: ", req.session);
