@@ -1,11 +1,10 @@
 import {NextFunction, Request, Response} from "express";
-import {Session, SessionManager} from "../../../auth/src/services/session-manager";
-import {UserDoc} from "../../../auth/src/models/user";
+import {Session, SessionManager, UserInfo} from "../services/session-manager";
 
 declare global {
     namespace Express {
         interface Request {
-            currentUser?: UserDoc
+            currentUser?: UserInfo
         }
     }
 }
@@ -20,7 +19,7 @@ export const currentUser = async (
     }
 
     try {
-        const user = await SessionManager.getUser(req.session as Session);
+        const user = SessionManager.getUserInfo(req.session as Session);
         if (user != null) {
             req.currentUser = user;
         }
